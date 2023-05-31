@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cexupuniversity.data.model.Course
@@ -70,32 +71,41 @@ fun DetailScreen(
 
                         HeaderCourse(dosen = dosen)
 
-                        Text(
-                            text = "Mahasiswa",
-                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                        )
+                        if(mahasiswa.isEmpty()){
+                            Text(
+                                text = "Tidak ada mahasiswa",
+                                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                            )
+                        } else{
+                            Text(
+                                text = "Mahasiswa",
+                                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                            )
 
-                        com.example.cexupuniversity.ui.components.SearchBar(
-                            query = query,
-                            onQueryChange = {
-                                            viewModel.getAllMahasiswaByName(id, it)
-                            },
-                            placeholder = "Cari Mahasiswa",
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                            com.example.cexupuniversity.ui.components.SearchBar(
+                                query = query,
+                                onQueryChange = {
+                                    viewModel.searchMahasiswa(id, it)
+                                },
+                                placeholder = "Cari Mahasiswa",
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
 
-                        LazyColumn{
-                            items(mahasiswa.size, key = {mahasiswa[it].nim}){
-                                MahasiswaItem(mahasiswa = mahasiswa[it],
-                                    modifier = Modifier
-                                        .padding(vertical = 4.dp),
-                                    onDelete = {
-                                        viewModel.deleteMahasiswa(mahasiswa[it])
-                                        viewModel.getAllMahasiswaWithCourseId(id)
-                                    }
-                                )
+                            LazyColumn{
+                                items(mahasiswa.size, key = {mahasiswa[it].nim}){
+                                    MahasiswaItem(mahasiswa = mahasiswa[it],
+                                        modifier = Modifier
+                                            .padding(vertical = 4.dp),
+                                        onDelete = {
+                                            viewModel.deleteMahasiswa(mahasiswa[it])
+                                            viewModel.getAllMahasiswaWithCourseId(id)
+                                        }
+                                    )
+                                }
                             }
                         }
+
+
                     }
                 }
 
@@ -145,7 +155,9 @@ fun MahasiswaItem(
     ){
         Row(modifier = Modifier.padding(8.dp)) {
             Column(
-                modifier = Modifier.padding(8.dp).weight(weight = 1.0f, fill = true)
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(weight = 1.0f, fill = true)
             ) {
                 Text(
                     text = mahasiswa.name,
@@ -158,10 +170,11 @@ fun MahasiswaItem(
             }
 
             Box(
-                modifier = Modifier.align(alignment = Alignment.CenterVertically).
-                clickable {
-                    onDelete()
-                }
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterVertically)
+                    .clickable {
+                        onDelete()
+                    }
             ) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Button")
             }
@@ -195,24 +208,37 @@ fun DetailPreview(){
 
                 HeaderCourse(dosen = dosen,)
 
-                Text(
-                    text = "Mahasiswa",
-                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                )
-                com.example.cexupuniversity.ui.components.SearchBar(
-                    query = "",
-                    onQueryChange = {},
-                    placeholder = "Cari Mahasiswa",
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                if(mahasiswa.isEmpty()){
+                    Text(
+                        text = "Tidak ada mahasiswa",
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                        textAlign = TextAlign.Center
+                    )
+                } else{
+                    Text(
+                        text = "Mahasiswa",
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    )
 
-                LazyColumn(){
-                    items(mahasiswa.size, key = {mahasiswa[it].nim}){
-                        MahasiswaItem(mahasiswa = mahasiswa[it],
-                            modifier = Modifier
-                                .padding(vertical = 4.dp),
-                            onDelete = {}
-                        )
+                    com.example.cexupuniversity.ui.components.SearchBar(
+                        query = "",
+                        onQueryChange = {
+
+                        },
+                        placeholder = "Cari Mahasiswa",
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    LazyColumn{
+                        items(mahasiswa.size, key = {mahasiswa[it].nim}){
+                            MahasiswaItem(mahasiswa = mahasiswa[it],
+                                modifier = Modifier
+                                    .padding(vertical = 4.dp),
+                                onDelete = {
+
+                                }
+                            )
+                        }
                     }
                 }
             }

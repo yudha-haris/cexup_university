@@ -48,7 +48,7 @@ class DetailViewModel(private val repository: CourseRepository) : ViewModel() {
         }
     }
 
-    fun getAllMahasiswaByName(id: Int, value: String){
+    fun searchMahasiswa(id: Int, value: String){
         _query.value = value
         viewModelScope.launch {
             repository.getAllMahasiswaWithCourseId(id)
@@ -57,7 +57,7 @@ class DetailViewModel(private val repository: CourseRepository) : ViewModel() {
                 }
                 .collect{
                     _uiStateMahasiswa.value = UiState.Success(it[0].mahasiswas.filter { mhs ->
-                        mhs.name.contains(_query.value, ignoreCase = true)
+                        mhs.name.contains(_query.value, ignoreCase = true) || mhs.nim.contains(_query.value, ignoreCase = true)
                     })
                 }
         }

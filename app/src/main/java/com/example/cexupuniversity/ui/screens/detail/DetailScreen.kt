@@ -1,11 +1,15 @@
 package com.example.cexupuniversity.ui.screens.detail
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -84,7 +88,11 @@ fun DetailScreen(
                             items(mahasiswa.size, key = {mahasiswa[it].nim}){
                                 MahasiswaItem(mahasiswa = mahasiswa[it],
                                     modifier = Modifier
-                                        .padding(vertical = 4.dp)
+                                        .padding(vertical = 4.dp),
+                                    onDelete = {
+                                        viewModel.deleteMahasiswa(mahasiswa[it])
+                                        viewModel.getAllMahasiswaWithCourseId(id)
+                                    }
                                 )
                             }
                         }
@@ -128,24 +136,37 @@ fun HeaderCourse(
 @Composable
 fun MahasiswaItem(
     mahasiswa: Mahasiswa,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit,
 ){
     Card(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
         modifier = modifier.fillMaxWidth()
     ){
-        Column(
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Text(
-                text = mahasiswa.name,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                text = "NIM: ${mahasiswa.nim}",
-                style = MaterialTheme.typography.bodyMedium
-            )
+        Row(modifier = Modifier.padding(8.dp)) {
+            Column(
+                modifier = Modifier.padding(8.dp).weight(weight = 1.0f, fill = true)
+            ) {
+                Text(
+                    text = mahasiswa.name,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "NIM: ${mahasiswa.nim}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            Box(
+                modifier = Modifier.align(alignment = Alignment.CenterVertically).
+                clickable {
+                    onDelete()
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Button")
+            }
         }
+        
     }
 }
 
@@ -189,7 +210,8 @@ fun DetailPreview(){
                     items(mahasiswa.size, key = {mahasiswa[it].nim}){
                         MahasiswaItem(mahasiswa = mahasiswa[it],
                             modifier = Modifier
-                                .padding(vertical = 4.dp)
+                                .padding(vertical = 4.dp),
+                            onDelete = {}
                         )
                     }
                 }

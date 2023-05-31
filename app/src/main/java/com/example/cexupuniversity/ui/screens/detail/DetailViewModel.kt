@@ -62,4 +62,10 @@ class DetailViewModel(private val repository: CourseRepository) : ViewModel() {
                 }
         }
     }
+
+    fun deleteMahasiswa(mahasiswa: Mahasiswa){
+        viewModelScope.launch {
+            repository.deleteMahasiswa(mahasiswa)
+        }
+    }
 }

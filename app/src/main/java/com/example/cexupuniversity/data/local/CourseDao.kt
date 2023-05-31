@@ -16,6 +16,9 @@ interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCourse(courses: List<Course>)
 
+    @Delete()
+    suspend fun deleteMahasiswa(mahasiswa: Mahasiswa)
+
     @Query("SELECT * FROM course")
     fun getAll(): Flow<List<Course>>
 

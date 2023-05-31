@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.cexupuniversity.data.CourseRepository
 import com.example.cexupuniversity.data.model.Course
 import com.example.cexupuniversity.ui.common.UiState
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch

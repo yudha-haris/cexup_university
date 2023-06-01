@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">CexupUniversity</string>
+    <string name="dosen_title">Dosen</string>
+    <string name="empty_mahasiswa">Tidak ada mahasiswa</string>
+    <string name="mahasiswa_title">Mahasiswa</string>
+    <string name="find_mahasiswa">Cari Mahasiswa</string>
 </resources>

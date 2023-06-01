@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CourseDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertMahasiswa(mahasiswa: List<Mahasiswa>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

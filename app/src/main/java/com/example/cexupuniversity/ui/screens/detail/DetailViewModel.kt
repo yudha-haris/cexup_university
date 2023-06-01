@@ -17,11 +17,38 @@ class DetailViewModel(private val repository: CourseRepository) : ViewModel() {
         course = Course(0, ""),
         dosen = Dosen("","", 0)
     ))
+    private val _mahasiswaNameInput = mutableStateOf("")
+    private val _mahasiswaNimInput = mutableStateOf("")
+    private val _errorText = mutableStateOf("")
 
     val uiStateMahasiswa: StateFlow<UiState<List<Mahasiswa>>>
         get() = _uiStateMahasiswa
     val query: State<String> get() = _query
     val courseAndDosen: State<CourseAndDosen> get() = _courseAndDosen
+    val mahasiswaNameInput: State<String> get() = _mahasiswaNameInput
+    val mahasiswaNimInput: State<String> get() = _mahasiswaNimInput
+    val errorText: State<String> get() = _errorText
+
+    fun insertMahasiswa(courseId: Int){
+
+        val data = listOf(Mahasiswa(_mahasiswaNimInput.value, _mahasiswaNameInput.value, courseId))
+        viewModelScope.launch {
+            try{
+                repository.insertMahasiswa(data)
+                _mahasiswaNameInput.value = ""
+                _mahasiswaNimInput.value = ""
+            } catch(e: Exception) {
+                _errorText.value = e.message.toString()
+            }
+
+        }
+    }
+
+    fun onInsertMahasiswaChanged(name: String, nim: String){
+        _mahasiswaNimInput.value = nim
+        _mahasiswaNameInput.value = name
+        _errorText.value = ""
+    }
 
 
     fun getAllMahasiswaWithCourseId(id: Int){

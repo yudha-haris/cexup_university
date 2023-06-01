@@ -11,10 +11,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cexupuniversity.R
 import com.example.cexupuniversity.data.model.Course
 import com.example.cexupuniversity.data.model.Dosen
 import com.example.cexupuniversity.data.model.Mahasiswa
@@ -34,6 +37,9 @@ fun DetailScreen(
 ){
     val query by viewModel.query
     val courseAndDosen by viewModel.courseAndDosen
+    val mahasiswaValue by viewModel.mahasiswaNameInput
+    val nimValue by viewModel.mahasiswaNimInput
+    val errorText by viewModel.errorText
     val dosen : Dosen = courseAndDosen.dosen
     val matakuliah : Course = courseAndDosen.course
 
@@ -65,7 +71,7 @@ fun DetailScreen(
                             .padding(horizontal = 16.dp)
                     ) {
                         Text(
-                            text = "Dosen",
+                            text = stringResource(R.string.dosen_title),
                             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                         )
 
@@ -73,12 +79,12 @@ fun DetailScreen(
 
                         if(mahasiswa.isEmpty()){
                             Text(
-                                text = "Tidak ada mahasiswa",
+                                text = stringResource(R.string.empty_mahasiswa),
                                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                             )
                         } else{
                             Text(
-                                text = "Mahasiswa",
+                                text = stringResource(R.string.mahasiswa_title),
                                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                             )
 
@@ -87,11 +93,32 @@ fun DetailScreen(
                                 onQueryChange = {
                                     viewModel.searchMahasiswa(id, it)
                                 },
-                                placeholder = "Cari Mahasiswa",
+                                placeholder = stringResource(R.string.find_mahasiswa),
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
 
+                            Text(
+                                text = "Tambah Mahasiswa",
+                                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                            )
+
                             LazyColumn{
+                                item {
+                                    InsertMahasiswaBox(
+                                        mahasiswaValue,
+                                        nimValue,
+                                        errorText,
+                                        onAdd = {
+                                            viewModel.insertMahasiswa(id)
+                                            viewModel.getAllMahasiswaWithCourseId(id)
+                                        },
+                                        onChange = { name, nim ->
+                                            viewModel.onInsertMahasiswaChanged(name, nim)
+
+                                        },
+                                        modifier = Modifier.padding(bottom = 16.dp)
+                                    )
+                                }
                                 items(mahasiswa.size, key = {mahasiswa[it].nim}){
                                     MahasiswaItem(mahasiswa = mahasiswa[it],
                                         modifier = Modifier
@@ -184,6 +211,55 @@ fun MahasiswaItem(
 }
 
 @Composable
+fun InsertMahasiswaBox(
+    mahasiswaValue: String,
+    nimValue: String,
+    errorText: String,
+    onAdd: () -> Unit,
+    onChange: (name: String, nim: String) -> Unit,
+    modifier: Modifier = Modifier,
+){
+    Card(
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+        modifier = modifier.fillMaxWidth()
+    ){
+        Column(
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier.padding(8.dp).fillMaxWidth()
+        ) {
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = mahasiswaValue,
+                onValueChange = {
+                    onChange(it, nimValue)
+                })
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = nimValue,
+                onValueChange = {
+                    onChange(mahasiswaValue, it)
+                })
+            Text(
+                text = errorText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Red,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                textAlign = TextAlign.Center,
+            )
+            Button(onClick = {
+                onAdd()
+            }) {
+                Text(
+                    text = "Tambah Mahasiswa",
+                    color = Color.White
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
 @Preview
 fun DetailPreview(){
     CexupUniversityTheme() {
@@ -228,7 +304,20 @@ fun DetailPreview(){
                         placeholder = "Cari Mahasiswa",
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
+                    Text(
+                        text = "Tambah Mahasiswa",
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    )
+                    InsertMahasiswaBox(
+                        mahasiswaValue = "Joko Sutopo",
+                        nimValue = "112345",
+                        errorText = "NIM Sudah Ada",
+                        onAdd = {  },
+                        onChange = { name, nim ->
 
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                     LazyColumn{
                         items(mahasiswa.size, key = {mahasiswa[it].nim}){
                             MahasiswaItem(mahasiswa = mahasiswa[it],
@@ -240,6 +329,8 @@ fun DetailPreview(){
                             )
                         }
                     }
+
+
                 }
             }
         }

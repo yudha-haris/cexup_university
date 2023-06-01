@@ -14,6 +14,7 @@ class CourseRepository(private val courseDatabase: CourseDatabase) {
     fun getAllDosenWithCourseId(id: Int) : Flow<List<CourseAndDosen>> = courseDatabase.courseDao().getAllDosenWithCourseId(id)
 
     suspend fun deleteMahasiswa(mahasiswa: Mahasiswa) = courseDatabase.courseDao().deleteMahasiswa(mahasiswa)
+    suspend fun insertMahasiswa(mahasiswa: List<Mahasiswa>) = courseDatabase.courseDao().insertMahasiswa(mahasiswa)
 
     suspend fun insertAllData(){
         courseDatabase.courseDao().insertCourse(InitialDataSource.getCourses())
